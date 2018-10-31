@@ -32,7 +32,7 @@ pipeline{
 				build job: 'deploy-to-prod'
 			}
 			post {
-				sucess {
+				success {
 					echo 'Codigo desplegado a Produccion'
 				}
 
