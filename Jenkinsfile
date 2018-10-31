@@ -16,10 +16,31 @@ pipeline{
 				
 			}
 		}
+		
 		stage('Deploy to Staging'){
 			steps{
 				build job: 'deploy-to-staging'
 			}
 		}
+
+		stage('Deploy to Production'){
+			steps{
+				timeout(time:5, unit:'DAYS'){
+					input message: '¿Aprobar Paso a Producción?'
+				}
+
+				build job: 'deploy-to-prod'
+			}
+			post {
+				sucess {
+					echo 'Codigo desplegado a Produccion'
+				}
+
+				failure {
+					echo 'Despliegue fallido'
+				}
+			}
+		}
+
 	}
 }
