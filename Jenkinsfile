@@ -3,6 +3,15 @@ pipeline{
 	tools{
 		maven 'M2_HOME'
 	}
+	parameters{
+		string(name: 'Staging', defaultValue: '54.237.205.178', description: 'Staging Server')
+		string(name: 'Produccion', defaultValue: '18.215.239.202', description: 'Produccion Server')
+	}
+
+	triggers {
+		pollSCM('* * * * *')
+	}
+
 	stages{
 		stage('Build'){
 			steps {
@@ -17,30 +26,21 @@ pipeline{
 			}
 		}
 		
-		stage('Deploy to Staging'){
-			steps{
-				build job: 'deploy-to-staging'
-			}
-		}
+		stage ('Deployments'){
+            parallel{
+                stage ('Deploy to Staging'){
+                    steps {
+                        sh "scp -i /Users/fcarrisoza/Udemy/Jenkins/tomcatDemo.pem **/target/*.war ec2-user@${params.Staging}:/var/lib/tomcat7/webapps"
+                    }
+                }
 
-		stage('Deploy to Production'){
-			steps{
-				timeout(time:5, unit:'DAYS'){
-					input message: '¿Aprobar Paso a Producción?'
-				}
+                stage ("Deploy to Production"){
+                    steps {
+                        sh "scp -i /Users/fcarrisoza/Udemy/Jenkins/tomcatDemo.pem **/target/*.war ec2-user@${params.Produccion}:/var/lib/tomcat7/webapps"
+                    }
+                }
+            }
+        }
+    }
 
-				build job: 'deploy-to-prod'
-			}
-			post {
-				success {
-					echo 'Codigo desplegado a Produccion'
-				}
-
-				failure {
-					echo 'Despliegue fallido'
-				}
-			}
-		}
-
-	}
 }
