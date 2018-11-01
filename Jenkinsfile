@@ -30,13 +30,13 @@ pipeline{
             parallel{
                 stage ('Deploy to Staging'){
                     steps {
-                        sh "scp -i /Users/fcarrisoza/Udemy/Jenkins/tomcatDemo.pem **/target/*.war ec2-user@${params.Staging}:/var/lib/tomcat7/webapps"
+                        sh "scp -i /Users/fcarrisoza/Udemy/Jenkins/tomcatDemo.pem -o StrictHostKeyChecking=no **/target/*.war ec2-user@${params.Staging}:/var/lib/tomcat7/webapps"
                     }
                 }
 
                 stage ('Deploy to Production'){
                     steps {
-                        sh "scp -i /Users/fcarrisoza/Udemy/Jenkins/tomcatDemo.pem **/target/*.war ec2-user@${params.Produccion}:/var/lib/tomcat7/webapps"
+                        sh "scp -i /Users/fcarrisoza/Udemy/Jenkins/tomcatDemo.pem -o StrictHostKeyChecking=no **/target/*.war ec2-user@${params.Produccion}:/var/lib/tomcat7/webapps"
                     }
                 }
             }
