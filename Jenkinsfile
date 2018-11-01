@@ -34,7 +34,7 @@ pipeline{
                     }
                 }
 
-                stage ("Deploy to Production"){
+                stage ('Deploy to Production'){
                     steps {
                         sh "scp -i /Users/fcarrisoza/Udemy/Jenkins/tomcatDemo.pem **/target/*.war ec2-user@${params.Produccion}:/var/lib/tomcat7/webapps"
                     }
